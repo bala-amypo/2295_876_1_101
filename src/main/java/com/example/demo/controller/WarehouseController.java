@@ -26,3 +26,6 @@ public class WarehouseController {
         return warehouseRepository.save(warehouse);
     }
 }
+
+
+
