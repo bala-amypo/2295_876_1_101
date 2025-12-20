@@ -1,31 +1,31 @@
 package com.example.demo.controller;
 
-import com.example.demo.model.entity.Warehouse;
-import com.example.demo.repository.WarehouseRepository;
+import com.example.demo.model.Warehouse;
+import com.example.demo.service.WarehouseService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/warehouses")
+@RequiredArgsConstructor
 public class WarehouseController {
 
-    private final WarehouseRepository warehouseRepository;
+    private final WarehouseService warehouseService;
 
-    public WarehouseController(WarehouseRepository warehouseRepository) {
-        this.warehouseRepository = warehouseRepository;
+    @PostMapping
+    public Warehouse create(@RequestBody Warehouse warehouse) {
+        return warehouseService.createWarehouse(warehouse);
     }
 
     @GetMapping
-    public List<Warehouse> getAllWarehouses() {
-        return warehouseRepository.findAll();
+    public List<Warehouse> getAll() {
+        return warehouseService.getAllWarehouses();
     }
 
-    @PostMapping
-    public Warehouse createWarehouse(@RequestBody Warehouse warehouse) {
-        return warehouseRepository.save(warehouse);
+    @GetMapping("/{id}")
+    public Warehouse get(@PathVariable Long id) {
+        return warehouseService.getWarehouse(id);
     }
 }
-
-
-
