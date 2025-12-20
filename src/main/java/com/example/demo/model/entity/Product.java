@@ -1,4 +1,4 @@
-package com.example.demo.model.entity;
+package com.example.demo.model;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -27,4 +27,3 @@ public class Product {
 
     private LocalDateTime createdAt;
 }
-

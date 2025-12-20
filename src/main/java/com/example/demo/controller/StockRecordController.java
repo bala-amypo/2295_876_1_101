@@ -1,28 +1,32 @@
-package com.example.demo.controller;
+package com.example.demo.model;
 
-import com.example.demo.model.entity.StockRecord;
-import com.example.demo.repository.StockRecordRepository;
-import org.springframework.web.bind.annotation.*;
+import jakarta.persistence.*;
+import lombok.*;
 
-import java.util.List;
+import java.time.LocalDateTime;
 
-@RestController
-@RequestMapping("/api/stock-records")
-public class StockRecordController {
+@Entity
+@Table(
+    name = "stock_records",
+    uniqueConstraints = @UniqueConstraint(columnNames = {"product_id", "warehouse_id"})
+)
+@Getter @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class StockRecord {
 
-    private final StockRecordRepository stockRecordRepository;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    public StockRecordController(StockRecordRepository stockRecordRepository) {
-        this.stockRecordRepository = stockRecordRepository;
-    }
+    @ManyToOne(optional = false)
+    private Product product;
 
-    @GetMapping
-    public List<StockRecord> getAllStockRecords() {
-        return stockRecordRepository.findAll();
-    }
+    @ManyToOne(optional = false)
+    private Warehouse warehouse;
 
-    @PostMapping
-    public StockRecord createStockRecord(@RequestBody StockRecord stockRecord) {
-        return stockRecordRepository.save(stockRecord);
-    }
+    private Integer currentQuantity;
+    private Integer reorderThreshold;
+    private LocalDateTime lastUpdated;
 }
