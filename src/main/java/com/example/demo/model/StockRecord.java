@@ -1,32 +1,48 @@
 package com.example.demo.model;
 
-import jakarta.persistence.*;
-import lombok.*;
+import javax.persistence.*;
+import javax.validation.constraints.Min;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Entity
-@Table(
-    name = "stock_records",
-    uniqueConstraints = @UniqueConstraint(columnNames = {"product_id", "warehouse_id"})
-)
-@Getter @Setter
+@Table(name = "stock_records", 
+       uniqueConstraints = @UniqueConstraint(columnNames = {"product_id", "warehouse_id"}))
+@Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class StockRecord {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "warehouse_id", nullable = false)
     private Warehouse warehouse;
 
+    @Min(value = 0, message = "Current quantity must be >= 0")
+    @Column(nullable = false)
     private Integer currentQuantity;
+
+    @Min(value = 1, message = "Reorder threshold must be > 0")
+    @Column(nullable = false)
     private Integer reorderThreshold;
+
+    @Column(nullable = false)
     private LocalDateTime lastUpdated;
+
+    @PrePersist
+    @PreUpdate
+    protected void onUpdate() {
+        lastUpdated = LocalDateTime.now();
+    }
 }

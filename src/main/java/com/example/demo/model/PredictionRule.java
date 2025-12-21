@@ -1,29 +1,29 @@
 package com.example.demo.model;
 
-import jakarta.persistence.*;
-import lombok.*;
+import javax.persistence.*;
+import javax.validation.constraints.Min;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Entity
-@Table(
-        name = "prediction_rules",
-        uniqueConstraints = @UniqueConstraint(columnNames = "ruleName")
-)
-@Getter
-@Setter
+@Table(name = "prediction_rules")
+@Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class PredictionRule {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    @Column(unique = true, nullable = false)
     private String ruleName;
 
+    @Min(value = 1, message = "Average days window must be > 0")
     @Column(nullable = false)
     private Integer averageDaysWindow;
 
@@ -33,5 +33,11 @@ public class PredictionRule {
     @Column(nullable = false)
     private Integer maxDailyUsage;
 
+    @Column(nullable = false)
     private LocalDateTime createdAt;
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+    }
 }
