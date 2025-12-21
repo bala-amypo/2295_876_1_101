@@ -14,7 +14,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/predict")
 @Tag(name = "Predictions", description = "Restock prediction endpoints")
-public class PredictionController {
+public class PredictionRuleController {
 
     @Autowired
     private PredictionService predictionService;
