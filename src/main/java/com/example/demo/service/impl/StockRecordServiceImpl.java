@@ -7,6 +7,7 @@ import com.example.demo.model.Warehouse;
 import com.example.demo.repository.ProductRepository;
 import com.example.demo.repository.StockRecordRepository;
 import com.example.demo.repository.WarehouseRepository;
+import com.example.demo.service.StockRecordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
