@@ -1,7 +1,9 @@
 package com.example.demo.repository;
 
+import com.example.demo.model.PredictionRule;
 import org.springframework.data.jpa.repository.JpaRepository;
-import com.example.demo.model.entity.PredictionRule;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface PredictionRuleRepository extends JpaRepository<PredictionRule, Long> {
 }

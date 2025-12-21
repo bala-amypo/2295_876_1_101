@@ -1,43 +1,50 @@
 package com.example.demo.model;
 
-import jakarta.persistence.*;
-import lombok.*;
+import javax.persistence.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.Set;
 
 @Entity
-@Table(
-        name = "users",
-        uniqueConstraints = @UniqueConstraint(columnNames = "email")
-)
-@Getter
-@Setter
+@Table(name = "users")
+@Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class User {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "Name must not be empty")
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false, unique = true)
+    @Email(message = "Email must be valid")
+    @Column(unique = true, nullable = false)
     private String email;
 
+    @NotBlank(message = "Password must not be empty")
     @Column(nullable = false)
     private String password;
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(
-            name = "user_roles",
-            joinColumns = @JoinColumn(name = "user_id")
-    )
+    @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
+    @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
     @Enumerated(EnumType.STRING)
+    @Column(name = "role")
     private Set<Role> roles;
 
+    @Column(nullable = false)
     private LocalDateTime createdAt;
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+    }
 }
