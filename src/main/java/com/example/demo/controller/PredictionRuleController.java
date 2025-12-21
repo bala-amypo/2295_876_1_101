@@ -1,28 +1,42 @@
 package com.example.demo.controller;
 
-import com.example.demo.model.entity.PredictionRule;
-import com.example.demo.repository.PredictionRuleRepository;
+import com.example.demo.model.PredictionRule;
+import com.example.demo.service.PredictionService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/prediction-rules")
-public class PredictionRuleController {
+@RequestMapping("/api/predict")
+@Tag(name = "Predictions", description = "Restock prediction endpoints")
+public class PredictionController {
 
-    private final PredictionRuleRepository predictionRuleRepository;
+    @Autowired
+    private PredictionService predictionService;
 
-    public PredictionRuleController(PredictionRuleRepository predictionRuleRepository) {
-        this.predictionRuleRepository = predictionRuleRepository;
+    @GetMapping("/restock-date/{stockRecordId}")
+    @Operation(summary = "Predict restock date for a stock record")
+    public ResponseEntity<LocalDate> predictRestockDate(@PathVariable Long stockRecordId) {
+        LocalDate date = predictionService.predictRestockDate(stockRecordId);
+        return ResponseEntity.ok(date);
     }
 
-    @GetMapping
-    public List<PredictionRule> getAllRules() {
-        return predictionRuleRepository.findAll();
+    @PostMapping("/rules")
+    @Operation(summary = "Create a new prediction rule")
+    public ResponseEntity<PredictionRule> createRule(@RequestBody PredictionRule rule) {
+        PredictionRule created = predictionService.createRule(rule);
+        return ResponseEntity.ok(created);
     }
 
-    @PostMapping
-    public PredictionRule createRule(@RequestBody PredictionRule rule) {
-        return predictionRuleRepository.save(rule);
+    @GetMapping("/rules")
+    @Operation(summary = "Get all prediction rules")
+    public ResponseEntity<List<PredictionRule>> getAllRules() {
+        List<PredictionRule> rules = predictionService.getAllRules();
+        return ResponseEntity.ok(rules);
     }
 }

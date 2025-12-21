@@ -2,30 +2,40 @@ package com.example.demo.controller;
 
 import com.example.demo.model.Warehouse;
 import com.example.demo.service.WarehouseService;
-import lombok.RequiredArgsConstructor;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/warehouses")
-@RequiredArgsConstructor
+@Tag(name = "Warehouses", description = "Warehouse management endpoints")
 public class WarehouseController {
 
-    private final WarehouseService warehouseService;
+    @Autowired
+    private WarehouseService warehouseService;
 
     @PostMapping
-    public Warehouse create(@RequestBody Warehouse warehouse) {
-        return warehouseService.createWarehouse(warehouse);
+    @Operation(summary = "Create a new warehouse")
+    public ResponseEntity<Warehouse> createWarehouse(@RequestBody Warehouse warehouse) {
+        Warehouse created = warehouseService.createWarehouse(warehouse);
+        return ResponseEntity.ok(created);
     }
 
     @GetMapping
-    public List<Warehouse> getAll() {
-        return warehouseService.getAllWarehouses();
+    @Operation(summary = "Get all warehouses")
+    public ResponseEntity<List<Warehouse>> getAllWarehouses() {
+        List<Warehouse> warehouses = warehouseService.getAllWarehouses();
+        return ResponseEntity.ok(warehouses);
     }
 
     @GetMapping("/{id}")
-    public Warehouse get(@PathVariable Long id) {
-        return warehouseService.getWarehouse(id);
+    @Operation(summary = "Get warehouse by ID")
+    public ResponseEntity<Warehouse> getWarehouse(@PathVariable Long id) {
+        Warehouse warehouse = warehouseService.getWarehouse(id);
+        return ResponseEntity.ok(warehouse);
     }
 }
