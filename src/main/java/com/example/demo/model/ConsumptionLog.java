@@ -1,12 +1,11 @@
 package com.example.demo.model;
 
-import javax.persistence.*;
-import javax.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.*;
 import java.time.LocalDate;
 
 @Entity
@@ -24,7 +23,6 @@ public class ConsumptionLog {
     @JoinColumn(name = "stock_record_id", nullable = false)
     private StockRecord stockRecord;
 
-    @Min(value = 1, message = "Consumed quantity must be > 0")
     @Column(nullable = false)
     private Integer consumedQuantity;
 

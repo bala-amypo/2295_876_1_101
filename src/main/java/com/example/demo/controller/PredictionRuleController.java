@@ -3,8 +3,8 @@ package com.example.demo.controller;
 import com.example.demo.model.PredictionRule;
 import com.example.demo.service.PredictionService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,17 +13,21 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/predict")
-@Tag(name = "Predictions", description = "Restock prediction endpoints")
-public class PredictionRuleController {
+@Tag(name = "Predictions", description = "Prediction and rule management endpoints")
+@SecurityRequirement(name = "Bearer Authentication")
+public class PredictionController {
 
-    @Autowired
-    private PredictionService predictionService;
+    private final PredictionService predictionService;
+
+    public PredictionController(PredictionService predictionService) {
+        this.predictionService = predictionService;
+    }
 
     @GetMapping("/restock-date/{stockRecordId}")
     @Operation(summary = "Predict restock date for a stock record")
     public ResponseEntity<LocalDate> predictRestockDate(@PathVariable Long stockRecordId) {
-        LocalDate date = predictionService.predictRestockDate(stockRecordId);
-        return ResponseEntity.ok(date);
+        LocalDate restockDate = predictionService.predictRestockDate(stockRecordId);
+        return ResponseEntity.ok(restockDate);
     }
 
     @PostMapping("/rules")

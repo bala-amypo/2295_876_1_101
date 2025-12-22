@@ -1,12 +1,11 @@
 package com.example.demo.model;
 
-import javax.persistence.*;
-import javax.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
@@ -23,7 +22,6 @@ public class PredictionRule {
     @Column(unique = true, nullable = false)
     private String ruleName;
 
-    @Min(value = 1, message = "Average days window must be > 0")
     @Column(nullable = false)
     private Integer averageDaysWindow;
 
