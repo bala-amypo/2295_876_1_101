@@ -8,8 +8,6 @@ import com.example.demo.repository.ProductRepository;
 import com.example.demo.repository.StockRecordRepository;
 import com.example.demo.repository.WarehouseRepository;
 import com.example.demo.service.StockRecordService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,14 +15,17 @@ import java.util.List;
 @Service
 public class StockRecordServiceImpl implements StockRecordService {
 
-    @Autowired
-    private StockRecordRepository stockRecordRepository;
+    private final StockRecordRepository stockRecordRepository;
+    private final ProductRepository productRepository;
+    private final WarehouseRepository warehouseRepository;
 
-    @Autowired
-    private ProductRepository productRepository;
-
-    @Autowired
-    private WarehouseRepository warehouseRepository;
+    public StockRecordServiceImpl(StockRecordRepository stockRecordRepository,
+                                  ProductRepository productRepository,
+                                  WarehouseRepository warehouseRepository) {
+        this.stockRecordRepository = stockRecordRepository;
+        this.productRepository = productRepository;
+        this.warehouseRepository = warehouseRepository;
+    }
 
     @Override
     public StockRecord createStockRecord(Long productId, Long warehouseId, StockRecord record) {
@@ -34,21 +35,22 @@ public class StockRecordServiceImpl implements StockRecordService {
         Warehouse warehouse = warehouseRepository.findById(warehouseId)
                 .orElseThrow(() -> new ResourceNotFoundException("Warehouse not found"));
 
-        if (record.getCurrentQuantity() < 0) {
-            throw new IllegalArgumentException("Current quantity must be >= 0");
+        if (stockRecordRepository.findByProductIdAndWarehouseId(productId, warehouseId).isPresent()) {
+            throw new IllegalArgumentException("StockRecord already exists");
         }
+
+        if (record.getCurrentQuantity() < 0) {
+            throw new IllegalArgumentException("Current quantity must be greater than or equal to zero");
+        }
+
         if (record.getReorderThreshold() <= 0) {
-            throw new IllegalArgumentException("Reorder threshold must be > 0");
+            throw new IllegalArgumentException("Reorder threshold must be greater than zero");
         }
 
         record.setProduct(product);
         record.setWarehouse(warehouse);
-
-        try {
-            return stockRecordRepository.save(record);
-        } catch (DataIntegrityViolationException e) {
-            throw new IllegalArgumentException("StockRecord already exists");
-        }
+        
+        return stockRecordRepository.save(record);
     }
 
     @Override

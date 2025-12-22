@@ -1,6 +1,5 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.config.JwtProvider;
 import com.example.demo.dto.AuthRequest;
 import com.example.demo.dto.AuthResponse;
 import com.example.demo.dto.UserRegisterDto;
@@ -8,8 +7,8 @@ import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.model.Role;
 import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
+import com.example.demo.security.JwtProvider;
 import com.example.demo.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -20,23 +19,28 @@ import java.util.stream.Collectors;
 @Service
 public class UserServiceImpl implements UserService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtProvider jwtProvider;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @Autowired
-    private JwtProvider jwtProvider;
+    public UserServiceImpl(UserRepository userRepository, 
+                          PasswordEncoder passwordEncoder,
+                          JwtProvider jwtProvider) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtProvider = jwtProvider;
+    }
 
     @Override
     public User register(UserRegisterDto dto) {
         if (dto.getName() == null || dto.getName().trim().isEmpty()) {
             throw new IllegalArgumentException("Name must not be empty");
         }
+
         if (dto.getPassword() == null || dto.getPassword().trim().isEmpty()) {
             throw new IllegalArgumentException("Password must not be empty");
         }
+
         if (userRepository.findByEmail(dto.getEmail()).isPresent()) {
             throw new IllegalArgumentException("Email already exists");
         }
@@ -64,13 +68,12 @@ public class UserServiceImpl implements UserService {
             throw new IllegalArgumentException("Invalid credentials");
         }
 
-        Set<String> roleNames = user.getRoles().stream()
-                .map(role -> "ROLE_" + role.name())
+        String token = jwtProvider.generateToken(user);
+        Set<String> roleStrings = user.getRoles().stream()
+                .map(Enum::name)
                 .collect(Collectors.toSet());
 
-        String token = jwtProvider.generateToken(user.getId(), user.getEmail(), roleNames);
-
-        return new AuthResponse(token, user.getId(), user.getEmail(), roleNames);
+        return new AuthResponse(token, user.getId(), user.getEmail(), roleStrings);
     }
 
     @Override
