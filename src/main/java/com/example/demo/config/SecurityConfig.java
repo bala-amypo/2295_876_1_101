@@ -32,7 +32,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.cors(cors -> cors.configurationSource(request -> {
-                var corsConfig = new org.springframework.web.cors.CorsConfiguration();
+                org.springframework.web.cors.CorsConfiguration corsConfig = new org.springframework.web.cors.CorsConfiguration();
                 corsConfig.setAllowedOriginPatterns(java.util.Arrays.asList("*"));
                 corsConfig.setAllowedMethods(java.util.Arrays.asList("*"));
                 corsConfig.setAllowedHeaders(java.util.Arrays.asList("*"));
