@@ -1,12 +1,11 @@
 package com.example.demo.model;
 
-import javax.persistence.*;
-import javax.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
@@ -29,11 +28,9 @@ public class StockRecord {
     @JoinColumn(name = "warehouse_id", nullable = false)
     private Warehouse warehouse;
 
-    @Min(value = 0, message = "Current quantity must be >= 0")
     @Column(nullable = false)
     private Integer currentQuantity;
 
-    @Min(value = 1, message = "Reorder threshold must be > 0")
     @Column(nullable = false)
     private Integer reorderThreshold;
 

@@ -1,12 +1,11 @@
 package com.example.demo.model;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
@@ -23,7 +22,6 @@ public class Warehouse {
     @Column(unique = true, nullable = false)
     private String warehouseName;
 
-    @NotBlank(message = "Location must not be empty")
     @Column(nullable = false)
     private String location;
 
