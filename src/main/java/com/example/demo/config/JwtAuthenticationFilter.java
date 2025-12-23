@@ -1,54 +1,48 @@
 package com.example.demo.config;
 
-import com.example.demo.security.JwtProvider; // adjust package
-
+import java.io.IOException;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
-import org.springframework.web.filter.GenericFilterBean;
+import org.springframework.web.filter.OncePerRequestFilter;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.stream.Collectors;
+import com.example.demo.security.JwtProvider;
+import com.example.demo.security.CustomUserDetailsService;
 
 @Component
-public class JwtAuthenticationFilter extends GenericFilterBean {
+public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtProvider jwtProvider;
+    private final CustomUserDetailsService userDetailsService;
 
-    public JwtAuthenticationFilter(JwtProvider jwtProvider) {
+    public JwtAuthenticationFilter(JwtProvider jwtProvider, CustomUserDetailsService userDetailsService) {
         this.jwtProvider = jwtProvider;
+        this.userDetailsService = userDetailsService;
     }
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-            throws IOException, ServletException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
 
-        HttpServletRequest httpRequest = (HttpServletRequest) request;
-        String header = httpRequest.getHeader("Authorization");
+        String token = jwtProvider.resolveToken(request);
 
-        if (header != null && header.startsWith("Bearer ")) {
-            String token = header.substring(7);
+        if (token != null && jwtProvider.validateToken(token)) {
+            String username = jwtProvider.getUsername(token);
 
-            if (jwtProvider.validateToken(token)) {
-                var claims = jwtProvider.getClaims(token);
-                List<SimpleGrantedAuthority> roles = ((List<?>) claims.get("roles")).stream()
-                        .map(role -> new SimpleGrantedAuthority(role.toString()))
-                        .collect(Collectors.toList());
-
-                UsernamePasswordAuthenticationToken auth =
-                        new UsernamePasswordAuthenticationToken(claims.getSubject(), null, roles);
-                SecurityContextHolder.getContext().setAuthentication(auth);
-            }
+            var userDetails = userDetailsService.loadUserByUsername(username); // 'var' is fine for local variable
+            UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
+                    userDetails, null, userDetails.getAuthorities());
+            auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+            SecurityContextHolder.getContext().setAuthentication(auth);
         }
-        chain.doFilter(request, response);
+
+        filterChain.doFilter(request, response);
     }
 }
