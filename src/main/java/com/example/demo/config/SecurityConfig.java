@@ -1,5 +1,7 @@
 package com.example.demo.config;
 
+import org.springframework.security.web.SecurityFilterChain;
+
 import com.example.demo.security.JwtAuthenticationEntryPoint;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
