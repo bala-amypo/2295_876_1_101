@@ -1,6 +1,9 @@
 package com.example.demo.security;
 
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -9,9 +12,8 @@ import java.util.Map;
 @Component
 public class JwtProvider {
 
-    private final String secretKey = "yourSecretKey"; // use a secure key in real apps
+    private final String secretKey = "yourSecretKey"; // change this to a secure key
 
-    // Validate token
     public boolean validateToken(String token) {
         try {
             Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
@@ -21,12 +23,10 @@ public class JwtProvider {
         }
     }
 
-    // Extract claims
     public Claims getClaims(String token) {
         return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody();
     }
 
-    // Optional: generate token
     public String generateToken(String subject, Map<String, Object> claims, long expirationMillis) {
         return Jwts.builder()
                 .setClaims(claims)
