@@ -1,15 +1,9 @@
 package com.example.demo.model;
 
-import lombok.*;
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "stock_records", uniqueConstraints = {@UniqueConstraint(columnNames = {"product_id", "warehouse_id"})})
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class StockRecord {
 
     @Id
@@ -17,18 +11,62 @@ public class StockRecord {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(nullable = false)
     private Product product;
 
     @ManyToOne
-    @JoinColumn(nullable = false)
     private Warehouse warehouse;
 
-    @Column(nullable = false)
-    private Integer currentQuantity;
+    private int quantity;
 
-    @Column(nullable = false)
-    private Integer reorderThreshold;
+    private LocalDateTime createdAt;
 
-    private LocalDateTime lastUpdated;
+    public StockRecord() {
+    }
+
+    public StockRecord(Product product, Warehouse warehouse, int quantity, LocalDateTime createdAt) {
+        this.product = product;
+        this.warehouse = warehouse;
+        this.quantity = quantity;
+        this.createdAt = createdAt;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public Product getProduct() {
+        return product;
+    }
+
+    public Warehouse getWarehouse() {
+        return warehouse;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setProduct(Product product) {
+        this.product = product;
+    }
+
+    public void setWarehouse(Warehouse warehouse) {
+        this.warehouse = warehouse;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
 }

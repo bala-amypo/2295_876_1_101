@@ -3,6 +3,7 @@ package com.example.demo.controller;
 import com.example.demo.model.StockRecord;
 import com.example.demo.service.StockRecordService;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RestController
@@ -16,24 +17,25 @@ public class StockRecordController {
     }
 
     @PostMapping("/{productId}/{warehouseId}")
-    public StockRecord createStock(@PathVariable Long productId,
-                                   @PathVariable Long warehouseId,
-                                   @RequestBody StockRecord record) {
+    public StockRecord create(
+            @PathVariable Long productId,
+            @PathVariable Long warehouseId,
+            @RequestBody StockRecord record) {
         return service.createStockRecord(productId, warehouseId, record);
     }
 
     @GetMapping("/{id}")
-    public StockRecord getStock(@PathVariable Long id) {
+    public StockRecord get(@PathVariable Long id) {
         return service.getStockRecord(id);
     }
 
     @GetMapping("/product/{productId}")
-    public List<StockRecord> getByProduct(@PathVariable Long productId) {
+    public List<StockRecord> byProduct(@PathVariable Long productId) {
         return service.getRecordsByProduct(productId);
     }
 
     @GetMapping("/warehouse/{warehouseId}")
-    public List<StockRecord> getByWarehouse(@PathVariable Long warehouseId) {
+    public List<StockRecord> byWarehouse(@PathVariable Long warehouseId) {
         return service.getRecordsByWarehouse(warehouseId);
     }
-}
+} // <-- make sure this closing brace exists

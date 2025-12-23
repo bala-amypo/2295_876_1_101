@@ -3,6 +3,7 @@ package com.example.demo.controller;
 import com.example.demo.model.PredictionRule;
 import com.example.demo.service.PredictionService;
 import org.springframework.web.bind.annotation.*;
+
 import java.time.LocalDate;
 import java.util.List;
 
@@ -12,8 +13,14 @@ public class PredictionController {
 
     private final PredictionService service;
 
+    // Manual constructor for dependency injection
     public PredictionController(PredictionService service) {
         this.service = service;
+    }
+
+    @GetMapping("/restock-date/{stockRecordId}")
+    public LocalDate predict(@PathVariable Long stockRecordId) {
+        return service.predictRestockDate(stockRecordId);
     }
 
     @PostMapping("/rules")
@@ -22,12 +29,7 @@ public class PredictionController {
     }
 
     @GetMapping("/rules")
-    public List<PredictionRule> getAllRules() {
+    public List<PredictionRule> getRules() {
         return service.getAllRules();
-    }
-
-    @GetMapping("/restock-date/{stockRecordId}")
-    public LocalDate predictRestockDate(@PathVariable Long stockRecordId) {
-        return service.predictRestockDate(stockRecordId);
     }
 }

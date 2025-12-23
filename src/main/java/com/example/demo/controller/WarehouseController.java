@@ -3,6 +3,7 @@ package com.example.demo.controller;
 import com.example.demo.model.Warehouse;
 import com.example.demo.service.WarehouseService;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RestController
@@ -16,17 +17,17 @@ public class WarehouseController {
     }
 
     @PostMapping
-    public Warehouse createWarehouse(@RequestBody Warehouse warehouse) {
+    public Warehouse create(@RequestBody Warehouse warehouse) {
         return service.createWarehouse(warehouse);
     }
 
-    @GetMapping("/{id}")
-    public Warehouse getWarehouse(@PathVariable Long id) {
-        return service.getWarehouse(id);
-    }
-
     @GetMapping
-    public List<Warehouse> getAllWarehouses() {
+    public List<Warehouse> getAll() {
         return service.getAllWarehouses();
     }
-}
+
+    @GetMapping("/{id}")
+    public Warehouse get(@PathVariable Long id) {
+        return service.getWarehouse(id);
+    }
+} // <-- make sure this closing brace exists
