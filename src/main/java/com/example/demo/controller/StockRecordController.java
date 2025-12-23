@@ -2,53 +2,38 @@ package com.example.demo.controller;
 
 import com.example.demo.model.StockRecord;
 import com.example.demo.service.StockRecordService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/stocks")
-@Tag(name = "Stock Records", description = "Stock record management endpoints")
-@SecurityRequirement(name = "Bearer Authentication")
 public class StockRecordController {
 
-    private final StockRecordService stockRecordService;
+    private final StockRecordService service;
 
-    public StockRecordController(StockRecordService stockRecordService) {
-        this.stockRecordService = stockRecordService;
+    public StockRecordController(StockRecordService service) {
+        this.service = service;
     }
 
     @PostMapping("/{productId}/{warehouseId}")
-    @Operation(summary = "Create a new stock record")
-    public ResponseEntity<StockRecord> createStockRecord(@PathVariable Long productId,
-                                                         @PathVariable Long warehouseId,
-                                                         @RequestBody StockRecord record) {
-        StockRecord created = stockRecordService.createStockRecord(productId, warehouseId, record);
-        return ResponseEntity.ok(created);
-    }
-
-    @GetMapping("/product/{productId}")
-    @Operation(summary = "Get stock records by product ID")
-    public ResponseEntity<List<StockRecord>> getRecordsByProduct(@PathVariable Long productId) {
-        List<StockRecord> records = stockRecordService.getRecordsBy_product(productId);
-        return ResponseEntity.ok(records);
-    }
-
-    @GetMapping("/warehouse/{warehouseId}")
-    @Operation(summary = "Get stock records by warehouse ID")
-    public ResponseEntity<List<StockRecord>> getRecordsByWarehouse(@PathVariable Long warehouseId) {
-        List<StockRecord> records = stockRecordService.getRecordsByWarehouse(warehouseId);
-        return ResponseEntity.ok(records);
+    public StockRecord createStock(@PathVariable Long productId,
+                                   @PathVariable Long warehouseId,
+                                   @RequestBody StockRecord record) {
+        return service.createStockRecord(productId, warehouseId, record);
     }
 
     @GetMapping("/{id}")
-    @Operation(summary = "Get stock record by ID")
-    public ResponseEntity<StockRecord> getStockRecord(@PathVariable Long id) {
-        StockRecord record = stockRecordService.getStockRecord(id);
-        return ResponseEntity.ok(record);
+    public StockRecord getStock(@PathVariable Long id) {
+        return service.getStockRecord(id);
+    }
+
+    @GetMapping("/product/{productId}")
+    public List<StockRecord> getByProduct(@PathVariable Long productId) {
+        return service.getRecordsByProduct(productId);
+    }
+
+    @GetMapping("/warehouse/{warehouseId}")
+    public List<StockRecord> getByWarehouse(@PathVariable Long warehouseId) {
+        return service.getRecordsByWarehouse(warehouseId);
     }
 }
