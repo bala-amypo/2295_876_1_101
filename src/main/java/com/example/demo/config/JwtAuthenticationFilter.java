@@ -5,7 +5,6 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -30,19 +29,20 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
 
-        HttpServletRequest req = (HttpServletRequest) request;
-        String header = req.getHeader("Authorization");
+        HttpServletRequest httpRequest = (HttpServletRequest) request;
+        String header = httpRequest.getHeader("Authorization");
 
         if (header != null && header.startsWith("Bearer ")) {
             String token = header.substring(7);
 
             if (jwtProvider.validateToken(token)) {
                 var claims = jwtProvider.getClaims(token);
-                var roles = ((List<?>) claims.get("roles")).stream()
+                List<SimpleGrantedAuthority> roles = ((List<?>) claims.get("roles")).stream()
                         .map(role -> new SimpleGrantedAuthority(role.toString()))
                         .collect(Collectors.toList());
 
-                var auth = new UsernamePasswordAuthenticationToken(claims.getSubject(), null, roles);
+                UsernamePasswordAuthenticationToken auth =
+                        new UsernamePasswordAuthenticationToken(claims.getSubject(), null, roles);
                 SecurityContextHolder.getContext().setAuthentication(auth);
             }
         }
