@@ -1,4 +1,3 @@
-// 
 package com.example.demo.security;
 
 import io.jsonwebtoken.Claims;
@@ -24,7 +23,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final UserDetailsService userDetailsService;
 
-    @Value("${jwt.secret:secretkey}")
+    @Value("${jwt.secret}")
     private String jwtSecret;
 
     public JwtAuthenticationFilter(UserDetailsService userDetailsService) {
@@ -38,32 +37,44 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             FilterChain filterChain
     ) throws ServletException, IOException {
 
-        String header = request.getHeader("Authorization");
+        String authHeader = request.getHeader("Authorization");
 
-        String token = null;
-        String username = null;
-
-        if (header != null && header.startsWith("Bearer ")) {
-            token = header.substring(7);
-            try {
-                Claims claims = Jwts.parserBuilder()
-                        .setSigningKey(jwtSecret.getBytes())
-                        .build()
-                        .parseClaimsJws(token)
-                        .getBody();
-
-                username = claims.getSubject();
-
-                if (claims.getExpiration().before(new Date())) {
-                    username = null;
-                }
-            } catch (Exception e) {
-                username = null;
-            }
+        // 1️⃣ No token → just continue (important for /auth/**)
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            filterChain.doFilter(request, response);
+            return;
         }
 
-        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+        String token = authHeader.substring(7);
+        String email;
+
+        try {
+            Claims claims = Jwts.parserBuilder()
+                    .setSigningKey(jwtSecret.getBytes())
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+
+            // 2️⃣ SUBJECT MUST BE EMAIL
+            email = claims.getSubject();
+
+            // 3️⃣ Token expired
+            if (claims.getExpiration().before(new Date())) {
+                filterChain.doFilter(request, response);
+                return;
+            }
+
+        } catch (Exception e) {
+            // Invalid token
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        // 4️⃣ Authenticate user
+        if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+
+            UserDetails userDetails =
+                    userDetailsService.loadUserByUsername(email);
 
             UsernamePasswordAuthenticationToken authToken =
                     new UsernamePasswordAuthenticationToken(
@@ -82,3 +93,4 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 }
+    `
