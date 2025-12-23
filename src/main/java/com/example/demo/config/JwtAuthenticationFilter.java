@@ -1,24 +1,22 @@
 package com.example.demo.config;
 
-import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
-
-import com.example.demo.security.JwtProvider;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.web.filter.GenericFilterBean;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
-public class JwtAuthenticationFilter implements Filter {
+public class JwtAuthenticationFilter extends GenericFilterBean {
 
     private final JwtProvider jwtProvider;
 
@@ -27,19 +25,16 @@ public class JwtAuthenticationFilter implements Filter {
     }
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) 
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
-
         HttpServletRequest req = (HttpServletRequest) request;
         String header = req.getHeader("Authorization");
 
         if (header != null && header.startsWith("Bearer ")) {
             String token = header.substring(7);
-
             if (jwtProvider.validateToken(token)) {
                 var claims = jwtProvider.getClaims(token);
-
-                List<SimpleGrantedAuthority> roles = ((List<?>) claims.get("roles")).stream()
+                var roles = ((List<?>) claims.get("roles")).stream()
                         .map(role -> new SimpleGrantedAuthority(role.toString()))
                         .collect(Collectors.toList());
 
