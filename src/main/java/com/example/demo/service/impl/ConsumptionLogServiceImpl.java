@@ -1,53 +1,45 @@
 package com.example.demo.service.impl;
 
+import com.example.demo.model.*;
+import com.example.demo.repository.*;
 import com.example.demo.exception.ResourceNotFoundException;
-import com.example.demo.model.ConsumptionLog;
-import com.example.demo.model.StockRecord;
-import com.example.demo.repository.ConsumptionLogRepository;
-import com.example.demo.repository.StockRecordRepository;
 import com.example.demo.service.ConsumptionLogService;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDate;
 import java.util.List;
 
 @Service
 public class ConsumptionLogServiceImpl implements ConsumptionLogService {
 
-    private final ConsumptionLogRepository consumptionLogRepository;
-    private final StockRecordRepository stockRecordRepository;
+    private final ConsumptionLogRepository logRepo;
+    private final StockRecordRepository stockRepo;
 
-    public ConsumptionLogServiceImpl(ConsumptionLogRepository consumptionLogRepository,
-                                     StockRecordRepository stockRecordRepository) {
-        this.consumptionLogRepository = consumptionLogRepository;
-        this.stockRecordRepository = stockRecordRepository;
+    public ConsumptionLogServiceImpl(ConsumptionLogRepository logRepo, StockRecordRepository stockRepo) {
+        this.logRepo = logRepo;
+        this.stockRepo = stockRepo;
     }
 
     @Override
     public ConsumptionLog logConsumption(Long stockRecordId, ConsumptionLog log) {
-        StockRecord stockRecord = stockRecordRepository.findById(stockRecordId)
+        StockRecord stock = stockRepo.findById(stockRecordId)
                 .orElseThrow(() -> new ResourceNotFoundException("StockRecord not found"));
 
-        if (log.getConsumedQuantity() <= 0) {
-            throw new IllegalArgumentException("Consumed quantity must be greater than zero");
-        }
-
-        if (log.getConsumedDate().isAfter(LocalDate.now())) {
+        if (log.getConsumedQuantity() <= 0)
+            throw new IllegalArgumentException("consumedQuantity must be > 0");
+        if (log.getConsumedDate().isAfter(LocalDate.now()))
             throw new IllegalArgumentException("consumedDate cannot be future");
-        }
 
-        log.setStockRecord(stockRecord);
-        return consumptionLogRepository.save(log);
-    }
-
-    @Override
-    public List<ConsumptionLog> getLogsByStockRecord(Long stockRecordId) {
-        return consumptionLogRepository.findByStockRecordId(stockRecordId);
+        log.setStockRecord(stock);
+        return logRepo.save(log);
     }
 
     @Override
     public ConsumptionLog getLog(Long id) {
-        return consumptionLogRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("ConsumptionLog not found"));
+        return logRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("ConsumptionLog not found"));
+    }
+
+    @Override
+    public List<ConsumptionLog> getLogsByStockRecord(Long stockRecordId) {
+        return logRepo.findByStockRecordId(stockRecordId);
     }
 }
