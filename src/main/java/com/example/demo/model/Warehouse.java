@@ -1,15 +1,11 @@
 package com.example.demo.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-import javax.persistence.*;
+import jakarta.persistence.*;
+import lombok.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "warehouses")
+@Table(name = "warehouses", uniqueConstraints = {@UniqueConstraint(columnNames = "warehouseName")})
 @Data
 @Builder
 @NoArgsConstructor
@@ -19,17 +15,11 @@ public class Warehouse {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false, unique = true)
     private String warehouseName;
 
     @Column(nullable = false)
     private String location;
 
-    @Column(nullable = false)
     private LocalDateTime createdAt;
-
-    @PrePersist
-    protected void onCreate() {
-        createdAt = LocalDateTime.now();
-    }
 }

@@ -1,11 +1,7 @@
 package com.example.demo.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-import javax.persistence.*;
+import jakarta.persistence.*;
+import lombok.*;
 import java.time.LocalDate;
 
 @Entity
@@ -19,8 +15,8 @@ public class ConsumptionLog {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "stock_record_id", nullable = false)
+    @ManyToOne
+    @JoinColumn(nullable = false)
     private StockRecord stockRecord;
 
     @Column(nullable = false)
