@@ -1,47 +1,42 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.model.Warehouse;
 import com.example.demo.repository.WarehouseRepository;
+import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.service.WarehouseService;
 import org.springframework.stereotype.Service;
-
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
 public class WarehouseServiceImpl implements WarehouseService {
 
-    private final WarehouseRepository warehouseRepository;
+    private final WarehouseRepository repo;
 
-    public WarehouseServiceImpl(WarehouseRepository warehouseRepository) {
-        this.warehouseRepository = warehouseRepository;
+    public WarehouseServiceImpl(WarehouseRepository repo) {
+        this.repo = repo;
     }
 
     @Override
     public Warehouse createWarehouse(Warehouse warehouse) {
-        if (warehouse.getWarehouseName() == null || warehouse.getWarehouseName().trim().isEmpty()) {
-            throw new IllegalArgumentException("Warehouse name must not be empty");
-        }
-        
-        if (warehouse.getLocation() == null || warehouse.getLocation().trim().isEmpty()) {
-            throw new IllegalArgumentException("Location must not be empty");
-        }
-        
-        if (warehouseRepository.findByWarehouseName(warehouse.getWarehouseName()).isPresent()) {
-            throw new IllegalArgumentException("Warehouse name already exists");
-        }
-        
-        return warehouseRepository.save(warehouse);
+        if (warehouse.getLocation() == null || warehouse.getLocation().isBlank())
+            throw new IllegalArgumentException("location cannot be empty");
+
+        repo.findByWarehouseName(warehouse.getWarehouseName()).ifPresent(w -> {
+            throw new IllegalArgumentException("Warehouse name must be unique");
+        });
+
+        warehouse.setCreatedAt(LocalDateTime.now());
+        return repo.save(warehouse);
     }
 
     @Override
     public Warehouse getWarehouse(Long id) {
-        return warehouseRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Warehouse not found"));
+        return repo.findById(id).orElseThrow(() -> new ResourceNotFoundException("Warehouse not found"));
     }
 
     @Override
     public List<Warehouse> getAllWarehouses() {
-        return warehouseRepository.findAll();
+        return repo.findAll();
     }
 }
