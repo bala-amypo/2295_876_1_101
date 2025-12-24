@@ -21,6 +21,7 @@ public class StockRecordController {
             @PathVariable Long productId,
             @PathVariable Long warehouseId,
             @RequestBody StockRecord record) {
+
         return service.createStockRecord(productId, warehouseId, record);
     }
 
@@ -31,11 +32,11 @@ public class StockRecordController {
 
     @GetMapping("/product/{productId}")
     public List<StockRecord> byProduct(@PathVariable Long productId) {
-        return service.getRecordsByProduct(productId);
+        return service.getRecordsBy_product(productId);
     }
 
     @GetMapping("/warehouse/{warehouseId}")
     public List<StockRecord> byWarehouse(@PathVariable Long warehouseId) {
         return service.getRecordsByWarehouse(warehouseId);
     }
-} // <-- make sure this closing brace exists
+}

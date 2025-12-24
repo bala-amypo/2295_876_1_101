@@ -13,7 +13,6 @@ public class PredictionController {
 
     private final PredictionService service;
 
-    // Manual constructor for dependency injection
     public PredictionController(PredictionService service) {
         this.service = service;
     }

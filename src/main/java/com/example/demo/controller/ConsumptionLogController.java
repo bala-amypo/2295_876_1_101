@@ -7,24 +7,30 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/consumption")
+@RequestMapping("/api/consumption")
 public class ConsumptionLogController {
 
     private final ConsumptionLogService service;
 
-    // Manual constructor for dependency injection
     public ConsumptionLogController(ConsumptionLogService service) {
         this.service = service;
     }
 
-    @PostMapping("/{stockId}/{qty}")
-    public ConsumptionLog log(@PathVariable Long stockId,
-                              @PathVariable int qty) {
-        return service.logConsumption(stockId, qty);
+    @PostMapping("/{stockRecordId}")
+    public ConsumptionLog create(
+            @PathVariable Long stockRecordId,
+            @RequestBody ConsumptionLog log) {
+
+        return service.logConsumption(stockRecordId, log);
     }
 
-    @GetMapping
-    public List<ConsumptionLog> getAll() {
-        return service.getAll();
+    @GetMapping("/record/{stockRecordId}")
+    public List<ConsumptionLog> byRecord(@PathVariable Long stockRecordId) {
+        return service.getLogsByStockRecord(stockRecordId);
+    }
+
+    @GetMapping("/{id}")
+    public ConsumptionLog get(@PathVariable Long id) {
+        return service.getLog(id);
     }
 }
