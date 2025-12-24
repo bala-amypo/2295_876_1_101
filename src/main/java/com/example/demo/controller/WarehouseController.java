@@ -22,7 +22,7 @@ public class WarehouseController {
     }
 
     @GetMapping
-    public List<Warehouse> getAll() {
+    public List<Warehouse> all() {
         return service.getAllWarehouses();
     }
 
@@ -30,4 +30,4 @@ public class WarehouseController {
     public Warehouse get(@PathVariable Long id) {
         return service.getWarehouse(id);
     }
-} // <-- make sure this closing brace exists
+}

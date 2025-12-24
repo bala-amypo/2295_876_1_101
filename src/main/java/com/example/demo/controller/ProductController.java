@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/products")
+@RequestMapping("/api/products")
 public class ProductController {
 
     private final ProductService service;
@@ -18,11 +18,16 @@ public class ProductController {
 
     @PostMapping
     public Product create(@RequestBody Product product) {
-        return service.create(product);
+        return service.createProduct(product);
     }
 
     @GetMapping
-    public List<Product> getAll() {
-        return service.getAll();
+    public List<Product> all() {
+        return service.getAllProducts();
+    }
+
+    @GetMapping("/{id}")
+    public Product get(@PathVariable Long id) {
+        return service.getProduct(id);
     }
 }
