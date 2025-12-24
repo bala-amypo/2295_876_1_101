@@ -1,12 +1,15 @@
-// package com.example.demo.dto;
+package com.example.demo.dto;
 
-// import lombok.Data;
-// import java.util.Set;
+import lombok.Getter;
+import lombok.Setter;
 
-// @Data
-// public class UserRegisterDto {
-//     private String name;
-//     private String email;
-//     private String password;
-//     private Set<String> roles;
-// }
+import java.util.Set;
+
+@Getter
+@Setter
+public class UserRegisterDto {
+    private String name;
+    private String email;
+    private String password;
+    private Set<String> roles;
+}

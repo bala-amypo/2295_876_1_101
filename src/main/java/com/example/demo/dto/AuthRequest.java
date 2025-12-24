@@ -1,9 +1,11 @@
-// package com.example.demo.dto;
+package com.example.demo.dto;
 
-// import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-// @Data
-// public class AuthRequest {
-//     private String email;
-//     private String password;
-// }
+@Getter
+@Setter
+public class AuthRequest {
+    private String email;
+    private String password;
+}
