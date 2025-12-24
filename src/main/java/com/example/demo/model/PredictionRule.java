@@ -1,36 +1,31 @@
 package com.example.demo.model;
 
 import jakarta.persistence.*;
+import lombok.*;
+
+import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "prediction_rules")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class PredictionRule {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private int daysAhead;
+    @Column(unique = true, nullable = false)
+    private String ruleName;
 
-    public PredictionRule() {
-    }
+    private Integer averageDaysWindow;
 
-    public PredictionRule(int daysAhead) {
-        this.daysAhead = daysAhead;
-    }
+    private Integer minDailyUsage;
 
-    public Long getId() {
-        return id;
-    }
+    private Integer maxDailyUsage;
 
-    public int getDaysAhead() {
-        return daysAhead;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setDaysAhead(int daysAhead) {
-        this.daysAhead = daysAhead;
-    }
+    private LocalDateTime createdAt;
 }

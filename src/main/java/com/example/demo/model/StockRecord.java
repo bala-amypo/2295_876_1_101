@@ -1,72 +1,35 @@
 package com.example.demo.model;
 
 import jakarta.persistence.*;
+import lombok.*;
+
 import java.time.LocalDateTime;
 
 @Entity
+@Table(
+        name = "stock_records",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"product_id", "warehouse_id"})
+)
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class StockRecord {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     private Product product;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     private Warehouse warehouse;
 
-    private int quantity;
+    private Integer currentQuantity;
 
-    private LocalDateTime createdAt;
+    private Integer reorderThreshold;
 
-    public StockRecord() {
-    }
-
-    public StockRecord(Product product, Warehouse warehouse, int quantity, LocalDateTime createdAt) {
-        this.product = product;
-        this.warehouse = warehouse;
-        this.quantity = quantity;
-        this.createdAt = createdAt;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public Product getProduct() {
-        return product;
-    }
-
-    public Warehouse getWarehouse() {
-        return warehouse;
-    }
-
-    public int getQuantity() {
-        return quantity;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setProduct(Product product) {
-        this.product = product;
-    }
-
-    public void setWarehouse(Warehouse warehouse) {
-        this.warehouse = warehouse;
-    }
-
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
+    private LocalDateTime lastUpdated;
 }
