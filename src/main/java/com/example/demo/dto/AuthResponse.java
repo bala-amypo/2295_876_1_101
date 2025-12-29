@@ -4,15 +4,12 @@ import lombok.*;
 
 import java.util.Set;
 
-@Getter
-@Setter
+@Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class AuthResponse {
-
-    private Long id;
+    private String token;
+    private Long userId;
     private String email;
     private Set<String> roles;
-    private String token;
 }

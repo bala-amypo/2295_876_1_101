@@ -2,32 +2,34 @@ package com.example.demo.controller;
 
 import com.example.demo.model.Product;
 import com.example.demo.service.ProductService;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
-
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import java.util.List;
 
-@RestController("productController")
+@RestController
 @RequestMapping("/api/products")
+@SecurityRequirement(name="bearerAuth")
 public class ProductController {
 
-    private final ProductService service;
+    private final ProductService productService;
 
-    public ProductController(ProductService service) {
-        this.service = service;
+    public ProductController(ProductService productService) {
+        this.productService = productService;
     }
 
     @PostMapping
-    public Product create(@RequestBody Product product) {
-        return service.createProduct(product);
+    public Product create(@Valid @RequestBody Product product) {
+        return productService.createProduct(product);
     }
 
     @GetMapping("/{id}")
-    public Product get(@PathVariable Long id) {
-        return service.getProduct(id);
+    public Product getProduct(@PathVariable Long id) {
+        return productService.getProduct(id);
     }
 
     @GetMapping
-    public List<Product> all() {
-        return service.getAllProducts();
+    public List<Product> getAllProducts() {
+        return productService.getAllProducts();
     }
 }
