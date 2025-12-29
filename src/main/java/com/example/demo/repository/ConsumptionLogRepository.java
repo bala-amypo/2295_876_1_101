@@ -6,6 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface ConsumptionLogRepository extends JpaRepository<ConsumptionLog, Long> {
-
-    List<ConsumptionLog> findByStockRecordId(Long stockRecordId);
+    List<ConsumptionLog> findByStockRecordIdAndConsumedDateBetween(Long id, LocalDate s, LocalDate e);
+    List<ConsumptionLog> findByStockRecordIdOrderByConsumedDateDesc(Long id);
 }
