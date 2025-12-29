@@ -1,9 +1,10 @@
 package com.example.demo.util;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 public class DateUtil {
-    public static LocalDateTime now() {
-        return LocalDateTime.now();
+
+    public static boolean isFuture(LocalDate date) {
+        return date != null && date.isAfter(LocalDate.now());
     }
 }
