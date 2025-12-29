@@ -1,59 +1,26 @@
-// package com.example.demo.security;
+package com.example.demo.security;
 
-// import io.jsonwebtoken.*;
-// import io.jsonwebtoken.security.Keys;
-// import org.springframework.stereotype.Component;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.stereotype.Component;
 
-// import java.security.Key;
-// import java.util.Date;
-// import java.util.List;
+import java.util.Date;
+import java.util.Set;
 
-// @Component
-// public class JwtProvider {
+@Component
+public class JwtProvider {
 
-//     private static final long EXPIRATION_TIME = 1000 * 60 * 60 * 24; // 1 day
-//     private static final String SECRET = "mysecretkeymysecretkeymysecretkey12345";
+    private final String jwtSecret = "mySecretKey12345";
+    private final long jwtExpirationMs = 86400000; // 1 day
 
-//     private final Key key = Keys.hmacShaKeyFor(SECRET.getBytes());
-
-//     public String generateToken(Long userId, String email, List<String> roles) {
-
-//         return Jwts.builder()
-//                 .setSubject(email)
-//                 .claim("userId", userId)
-//                 .claim("roles", roles)
-//                 .setIssuedAt(new Date())
-//                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
-//                 .signWith(key, SignatureAlgorithm.HS256)
-//                 .compact();
-//     }
-
-//     public boolean validateToken(String token) {
-//         try {
-//             Jwts.parserBuilder()
-//                     .setSigningKey(key)
-//                     .build()
-//                     .parseClaimsJws(token);
-//             return true;
-//         } catch (JwtException | IllegalArgumentException ex) {
-//             return false;
-//         }
-//     }
-
-//     private Claims getClaims(String token) {
-//         return Jwts.parserBuilder()
-//                 .setSigningKey(key)
-//                 .build()
-//                 .parseClaimsJws(token)
-//                 .getBody();
-//     }
-
-//     public String getEmail(String token) {
-//         return getClaims(token).getSubject();
-//     }
-
-//     @SuppressWarnings("unchecked")
-//     public List<String> getRoles(String token) {
-//         return getClaims(token).get("roles", List.class);
-//     }
-// }
+    public String generateToken(Long userId, String email, Set<String> roles) {
+        return Jwts.builder()
+                .setSubject(email)
+                .claim("userId", userId)
+                .claim("roles", roles)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
+                .signWith(SignatureAlgorithm.HS256, jwtSecret)
+                .compact();
+    }
+}
