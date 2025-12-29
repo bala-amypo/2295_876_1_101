@@ -23,10 +23,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User register(UserRegisterDto dto) {
-
         Set<Role> roles = dto.getRoles()
                 .stream()
-                .map(role -> Role.valueOf(role.toUpperCase()))
+                .map(r -> Role.valueOf(r.toUpperCase()))
                 .collect(Collectors.toSet());
 
         User user = User.builder()
@@ -41,9 +40,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public AuthResponse login(AuthRequest request) {
-
-        User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        User user = getByEmail(request.getEmail());
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new RuntimeException("Invalid credentials");
@@ -66,5 +63,13 @@ public class UserServiceImpl implements UserService {
                 .roles(roleNames)
                 .token(token)
                 .build();
+    }
+
+    @Override
+    public User getByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() ->
+                        new RuntimeException("User not found with email: " + email)
+                );
     }
 }
