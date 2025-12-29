@@ -11,7 +11,7 @@ import java.util.Set;
 public class JwtProvider {
 
     private final String jwtSecret = "mySecretKey12345";
-    private final long jwtExpirationMs = 86400000; // 1 day
+    private final long jwtExpirationMs = 86400000;
 
     public String generateToken(Long userId, String email, Set<String> roles) {
         return Jwts.builder()
