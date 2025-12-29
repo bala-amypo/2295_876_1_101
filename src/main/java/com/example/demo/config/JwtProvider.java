@@ -1,24 +1,24 @@
-package com.example.demo.config;
+// package com.example.demo.config;
 
-import org.springframework.stereotype.Component;
-import java.util.Set;
+// import org.springframework.stereotype.Component;
+// import java.util.Set;
 
-@Component
-public class JwtProvider {
+// @Component
+// public class JwtProvider {
 
-    public String generateToken(String email, Long userId, Set<?> roles) {
-        return "fake.jwt.token";
-    }
+//     public String generateToken(String email, Long userId, Set<?> roles) {
+//         return "fake.jwt.token";
+//     }
 
-    public boolean validateToken(String token) {
-        return true;
-    }
+//     public boolean validateToken(String token) {
+//         return true;
+//     }
 
-    public String getEmailFromToken(String token) {
-        return "u@u.com";
-    }
+//     public String getEmailFromToken(String token) {
+//         return "u@u.com";
+//     }
 
-    public Long getUserId(String token) {
-        return null;
-    }
-}
+//     public Long getUserId(String token) {
+//         return null;
+//     }
+// }
