@@ -1,11 +1,17 @@
 package com.example.demo.dto;
 
-import lombok.Data;
+import lombok.*;
 
-@Data
+import java.util.Set;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class UserRegisterDto {
     private String name;
     private String email;
     private String password;
-    private String role;
+    private Set<String> roles;
 }
