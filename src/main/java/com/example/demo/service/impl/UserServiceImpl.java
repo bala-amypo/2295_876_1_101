@@ -86,7 +86,7 @@ public class UserServiceImpl implements UserService {
 
         return AuthResponse.builder()
                 .token(token)
-                .userId(user.getId())
+                .id(user.getId())
                 .email(user.getEmail())
                 .roles(
                         user.getRoles().stream()
