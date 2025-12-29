@@ -17,18 +17,18 @@ public class PredictionController {
         this.service = service;
     }
 
-    @GetMapping("/restock-date/{stockRecordId}")
-    public LocalDate predict(@PathVariable Long stockRecordId) {
-        return service.predictRestockDate(stockRecordId);
-    }
-
     @PostMapping("/rules")
     public PredictionRule createRule(@RequestBody PredictionRule rule) {
         return service.createRule(rule);
     }
 
     @GetMapping("/rules")
-    public List<PredictionRule> getRules() {
+    public List<PredictionRule> rules() {
         return service.getAllRules();
+    }
+
+    @GetMapping("/restock-date/{id}")
+    public LocalDate predict(@PathVariable Long id) {
+        return service.predictRestockDate(id);
     }
 }

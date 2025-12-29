@@ -4,9 +4,7 @@ import com.example.demo.model.Warehouse;
 import com.example.demo.service.WarehouseService;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
-@RestController
+@RestController("warehouseController")
 @RequestMapping("/api/warehouses")
 public class WarehouseController {
 
@@ -19,11 +17,6 @@ public class WarehouseController {
     @PostMapping
     public Warehouse create(@RequestBody Warehouse warehouse) {
         return service.createWarehouse(warehouse);
-    }
-
-    @GetMapping
-    public List<Warehouse> all() {
-        return service.getAllWarehouses();
     }
 
     @GetMapping("/{id}")
