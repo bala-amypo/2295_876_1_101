@@ -2,17 +2,24 @@ package com.example.demo.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-import java.time.LocalDateTime;
 
 @Entity
-@Data
-@Builder
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Warehouse {
-    @Id @GeneratedValue
+@Builder
+public class StockRecord {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String warehouseName;
-    private String location;
-    private LocalDateTime createdAt;
+
+    @ManyToOne
+    private Product product;
+
+    @ManyToOne
+    private Warehouse warehouse;
+
+    private int quantity;
 }
